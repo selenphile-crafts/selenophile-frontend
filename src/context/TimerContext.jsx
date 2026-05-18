@@ -54,7 +54,7 @@ export const TimerProvider = ({ children }) => {
 
   const bgmTracks = [
     { id: 1, title: 'Interstellar', url: './audio/interstellar.mp3', icon: 'music_note' },
-    { id: 2, title: 'Parizaad', url: './audio/parizaad.mp3', icon: 'music_note' },
+    { id: 2, title: 'Relaxed', url: './audio/relaxed.mp3', icon: 'music_note' },
     { id: 3, title: 'Rockstar', url: './audio/rockstar.mp3', icon: 'music_note' },
   ];
 
@@ -198,8 +198,8 @@ export const TimerProvider = ({ children }) => {
   }, [isPlaying, currentTrackIndex, volume]);
 
   const togglePlay = () => setIsPlaying(!isPlaying);
-  const nextTrack = () => setCurrentTrackIndex((prev) => (prev + 1) % 3); // 3 tracks
-  const prevTrack = () => setCurrentTrackIndex((prev) => (prev - 1 + 3) % 3);
+  const nextTrack = () => setCurrentTrackIndex((prev) => (prev + 1) % bgmTracks.length);
+  const prevTrack = () => setCurrentTrackIndex((prev) => (prev - 1 + bgmTracks.length) % bgmTracks.length);
 
   const value = {
     // Timer Core
