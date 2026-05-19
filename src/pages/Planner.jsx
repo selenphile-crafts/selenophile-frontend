@@ -4,6 +4,8 @@ import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import Toast from '../components/Toast';
+import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
 
 const Planner = () => {
   const { user, logout } = useAuth();
@@ -42,6 +44,14 @@ const Planner = () => {
     return localStorage.getItem('plannerUploadedImage') || null;
   });
   const fileInputRef = useRef(null);
+
+  // Crop State
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [imgSrc, setImgSrc] = useState('');
+  const imgRef = useRef(null);
+  const [crop, setCrop] = useState();
+  const [completedCrop, setCompletedCrop] = useState(null);
+  const [cropAspect, setCropAspect] = useState(16 / 9);
 
   // Auto-save to localStorage
   useEffect(() => {
@@ -192,9 +202,90 @@ const Planner = () => {
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      setUploadedImage(reader.result);
+      setImgSrc(reader.result);
+      setCropModalOpen(true);
+      // Reset input so the same file can be selected again if cancelled
+      if (fileInputRef.current) fileInputRef.current.value = '';
     };
     reader.readAsDataURL(file);
+  };
+
+  const onImageLoad = (e) => {
+    const { width, height } = e.currentTarget;
+    imgRef.current = e.currentTarget;
+    
+    // Determine aspect ratio based on window size
+    let aspect = 16 / 9;
+    if (window.innerWidth >= 1024) aspect = 21 / 9; // PC
+    else if (window.innerWidth >= 768) aspect = 16 / 9; // Tablet
+    else aspect = 1; // Mobile (Square)
+    
+    setCropAspect(aspect);
+
+    const initialCrop = centerCrop(
+      makeAspectCrop(
+        {
+          unit: '%',
+          width: 90,
+        },
+        aspect,
+        width,
+        height
+      ),
+      width,
+      height
+    );
+    
+    setCrop(initialCrop);
+    setCompletedCrop(initialCrop);
+  };
+
+  const generateCroppedImage = async () => {
+    if (!imgRef.current) return;
+
+    const image = imgRef.current;
+    
+    // If no crop is selected, treat the whole image as the crop area
+    const cropToUse = (completedCrop && completedCrop.width && completedCrop.height)
+      ? completedCrop
+      : { x: 0, y: 0, width: image.width, height: image.height };
+
+    const canvas = document.createElement('canvas');
+    const scaleX = image.naturalWidth / image.width;
+    const scaleY = image.naturalHeight / image.height;
+    
+    // Ensure actual pixel coordinates based on the original image dimensions
+    const pixelRatio = window.devicePixelRatio || 1;
+    canvas.width = Math.floor(cropToUse.width * scaleX * pixelRatio);
+    canvas.height = Math.floor(cropToUse.height * scaleY * pixelRatio);
+    
+    const ctx = canvas.getContext('2d');
+    ctx.scale(pixelRatio, pixelRatio);
+    ctx.imageSmoothingQuality = 'high';
+
+    const cropX = cropToUse.x * scaleX;
+    const cropY = cropToUse.y * scaleY;
+    const cropWidth = cropToUse.width * scaleX;
+    const cropHeight = cropToUse.height * scaleY;
+
+    ctx.drawImage(
+      image,
+      cropX,
+      cropY,
+      cropWidth,
+      cropHeight,
+      0,
+      0,
+      cropWidth,
+      cropHeight
+    );
+
+    const base64Image = canvas.toDataURL('image/jpeg', 0.9);
+    setUploadedImage(base64Image);
+    setCropModalOpen(false);
+    setImgSrc('');
+    setCompletedCrop(null);
+    setCrop(undefined);
   };
 
   const days = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
@@ -333,7 +424,7 @@ const Planner = () => {
         <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
           <input type="file" accept="image/*" ref={fileInputRef} className="hidden" onChange={handleImageUpload} />
           <div className="absolute -inset-2 bg-gradient-to-r from-primary to-secondary opacity-10 rounded-xl blur-xl transition group-hover:opacity-20"></div>
-          <div className="relative aspect-video rounded-xl overflow-hidden border border-surface-variant bg-surface-container flex items-center justify-center">
+          <div className="relative aspect-square md:aspect-video lg:aspect-[21/9] rounded-xl overflow-hidden border border-surface-variant bg-surface-container flex items-center justify-center">
             {uploadedImage ? (
               <img className="w-full h-full object-cover grayscale-20 hover:grayscale-0 transition-all duration-700" alt="Serene study corner" src={uploadedImage} />
             ) : (
@@ -389,6 +480,36 @@ const Planner = () => {
               <div className="flex gap-3">
                 <button onClick={handleRaiseIssue} disabled={loading} className="flex-1 bg-primary text-on-primary py-2.5 rounded-lg font-label-md hover:bg-secondary transition-colors">Submit Issue</button>
                 <button onClick={() => setComplaintModal(false)} className="flex-1 border border-surface-variant py-2.5 rounded-lg text-on-surface hover:bg-surface-variant/50 transition-colors">Cancel</button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Crop Modal */}
+      <AnimatePresence>
+        {cropModalOpen && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => { setCropModalOpen(false); setImgSrc(''); setCrop(undefined); }}>
+            <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }} className="bg-surface-container-lowest rounded-xl p-6 max-w-2xl w-full border border-surface-variant shadow-lg" onClick={e => e.stopPropagation()}>
+              <h3 className="font-headline-md text-headline-md text-primary mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined">crop</span> Crop Image
+              </h3>
+              <div className="flex justify-center max-h-[70vh] overflow-hidden mb-6 bg-surface-variant rounded-lg p-2">
+                {imgSrc && (
+                  <ReactCrop
+                    crop={crop}
+                    onChange={(c) => setCrop(c)}
+                    onComplete={(c) => setCompletedCrop(c)}
+                    aspect={cropAspect}
+                    className="max-h-full"
+                  >
+                    <img src={imgSrc} onLoad={onImageLoad} alt="Crop" className="max-h-[65vh] w-auto object-contain" />
+                  </ReactCrop>
+                )}
+              </div>
+              <div className="flex gap-3">
+                <button onClick={generateCroppedImage} className="flex-1 bg-primary text-on-primary py-2.5 rounded-lg font-label-md hover:bg-secondary transition-colors">Crop & Save</button>
+                <button onClick={() => { setCropModalOpen(false); setImgSrc(''); setCrop(undefined); }} className="flex-1 border border-surface-variant py-2.5 rounded-lg text-on-surface hover:bg-surface-variant/50 transition-colors">Cancel</button>
               </div>
             </motion.div>
           </motion.div>
