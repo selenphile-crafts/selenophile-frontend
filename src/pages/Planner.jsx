@@ -346,7 +346,7 @@ const Planner = () => {
         </div>
         <div className="space-y-base pl-0 md:pl-gutter">
           <h3 className="font-headline-md text-headline-md text-primary italic">"The quality of your work is the result of your ability to focus without distraction."</h3>
-          <p className="font-body-md text-body-md text-on-surface-variant">In our Creative Zone, we provide the tools to filter the noise. Use the planner to carve out non-negotiable blocks of time for your most difficult intellectual pursuits.</p>
+          <p className="font-body-md text-body-md text-on-surface-variant">"It's the repetition of affirmations that leads to belief. And once that belief becomes a deep conviction, things begin to happen."</p>
         </div>
       </section>
 

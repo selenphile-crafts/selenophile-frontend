@@ -186,7 +186,7 @@ const Home = () => {
                 <input
                   required
                   className="bg-surface-bright border border-surface-variant rounded-lg p-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-                  placeholder="e.g., Julian Barnes"
+                  placeholder="e.g., Sher Jahan"
                   value={enquiryData.name}
                   onChange={(e) => setEnquiryData({ ...enquiryData, name: e.target.value })}
                 />
@@ -197,7 +197,7 @@ const Home = () => {
                   required
                   type="email"
                   className="bg-surface-bright border border-surface-variant rounded-lg p-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-                  placeholder="julian@achievers.edu"
+                  placeholder="DarshanRaval@achievers.edu"
                   value={enquiryData.email}
                   onChange={(e) => setEnquiryData({ ...enquiryData, email: e.target.value })}
                 />
@@ -208,7 +208,7 @@ const Home = () => {
                   required
                   type="tel"
                   className="bg-surface-bright border border-surface-variant rounded-lg p-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-                  placeholder="+1 (555) 000-0000"
+                  placeholder="+91 9999-111-0000"
                   value={enquiryData.contact}
                   onChange={(e) => setEnquiryData({ ...enquiryData, contact: e.target.value })}
                 />

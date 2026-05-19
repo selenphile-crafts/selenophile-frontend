@@ -348,7 +348,7 @@ const Admin = () => {
                             <thead className="bg-surface-bright text-on-surface-variant border-b border-surface-variant">
                                 <tr>
                                     <th className="px-5 py-3 font-semibold">Member</th>
-                                    <th className="px-5 py-3 font-semibold">Email</th>
+                                    <th className="px-5 py-3 font-semibold">Contact Number</th>
                                     <th className="px-5 py-3 font-semibold">Status</th>
                                     <th className="px-5 py-3 font-semibold">Fee Due (₹)</th>
                                     <th className="px-5 py-3 font-semibold text-center">Action</th>
@@ -358,7 +358,7 @@ const Admin = () => {
                                 {users.map(u => (
                                     <tr key={u._id} className="border-b border-surface-variant hover:bg-surface-bright/50 transition">
                                         <td className="px-5 py-3 font-medium">{u.firstName} {u.lastName}</td>
-                                        <td className="px-5 py-3 text-on-surface-variant">{u.email}</td>
+                                        <td className="px-5 py-3 text-on-surface-variant">{u.contact}</td>
                                         <td className="px-5 py-3">
                                             {u.status === 'active' 
                                                 ? <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold inline-block">● Active</span>
