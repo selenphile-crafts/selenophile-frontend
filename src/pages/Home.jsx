@@ -32,7 +32,7 @@ const Home = () => {
     const nameError = validateName(sanitized.name);
     if (nameError) return setToast({ message: nameError, type: 'error' });
     
-    const emailError = validateEmail(sanitized.email);
+    const emailError = sanitized.email ? validateEmail(sanitized.email) : null;
     if (emailError) return setToast({ message: emailError, type: 'error' });
     
     const contactError = validateContact(sanitized.contact);
@@ -192,9 +192,8 @@ const Home = () => {
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <label className="font-label-md text-label-md text-on-surface-variant">Email Address</label>
+                <label className="font-label-md text-label-md text-on-surface-variant">Email Address <span className="text-sm font-normal text-on-surface-variant/70">(Optional)</span></label>
                 <input
-                  required
                   type="email"
                   className="bg-surface-bright border border-surface-variant rounded-lg p-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                   placeholder="DarshanRaval@achievers.edu"

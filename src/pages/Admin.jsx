@@ -13,6 +13,7 @@ const Admin = () => {
   const [adminPassword, setAdminPassword] = useState('');
   const [users, setUsers] = useState([]);
   const [complaints, setComplaints] = useState([]);
+  const [enquiries, setEnquiries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
   const [newComplaint, setNewComplaint] = useState({ userId: '', text: '' });
@@ -46,12 +47,14 @@ const Admin = () => {
 
   const fetchData = async () => {
     try {
-      const [usersRes, complaintsRes] = await Promise.all([
+      const [usersRes, complaintsRes, enquiriesRes] = await Promise.all([
         api.get('/users'),
-        api.get('/complaints')
+        api.get('/complaints'),
+        api.get('/enquiry')
       ]);
       setUsers(usersRes.data);
       setComplaints(complaintsRes.data);
+      setEnquiries(enquiriesRes.data);
     } catch (err) {
       setToast({ message: 'Failed to load data', type: 'error' });
     }
@@ -330,6 +333,38 @@ const Admin = () => {
                         </div>
                     </div>
                 ))}
+            </div>
+        </div>
+
+        {/* Library Enquiries Container */}
+        <div className="bg-surface-container-lowest border border-surface-variant rounded-xl shadow-sm mb-section-gap p-gutter">
+            <div className="flex items-center gap-2 mb-4 border-b border-surface-variant pb-3">
+                <span className="material-symbols-outlined text-primary">contact_mail</span>
+                <h2 className="font-headline-md text-headline-md text-primary">Library Enquiries</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-80 overflow-y-auto pr-2">
+                {enquiries.length === 0 ? (
+                    <div className="col-span-full text-center text-on-surface-variant py-6 bg-surface-bright rounded-xl border border-surface-variant"> No recent enquiries. </div>
+                ) : (
+                    enquiries.map(e => (
+                        <div key={e._id} className="bg-surface-bright p-4 rounded-xl border border-surface-variant flex flex-col gap-2 hover:shadow-md transition-all">
+                            <div className="flex justify-between items-start">
+                                <h3 className="font-bold text-primary">{e.name}</h3>
+                                <span className="text-xs text-on-surface-variant bg-surface-container px-2 py-1 rounded-full">{new Date(e.createdAt).toLocaleDateString()} {new Date(e.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                            </div>
+                            <div className="flex flex-col gap-1 mt-2">
+                                <div className="flex items-center gap-2 text-sm text-on-surface-variant">
+                                    <span className="material-symbols-outlined text-[16px]">call</span>
+                                    <span>{e.contact}</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-sm text-on-surface-variant">
+                                    <span className="material-symbols-outlined text-[16px]">mail</span>
+                                    <span>{e.email || 'Not provided'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                )}
             </div>
         </div>
 
