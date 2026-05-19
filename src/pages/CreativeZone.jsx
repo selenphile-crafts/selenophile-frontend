@@ -251,8 +251,8 @@ const CreativeZone = () => {
 
           {/* Tic Tac Toe */}
           <div className="bg-surface-container-lowest border border-surface-variant rounded-xl p-gutter h-[500px] flex flex-col items-center">
-            <div className="flex justify-between items-center w-full mb-4">
-              <h2 className="font-headline-md text-headline-md text-primary flex items-center gap-2">
+            <div className="flex flex-wrap justify-between items-center w-full mb-4 gap-2">
+              <h2 className="font-headline-md text-headline-md text-primary flex items-center gap-2 whitespace-nowrap">
                 <span className="material-symbols-outlined text-secondary">videogame_asset</span> Mini Break
               </h2>
               <div className="flex items-center gap-2">
@@ -267,7 +267,7 @@ const CreativeZone = () => {
             </div>
 
             <div className="flex-grow flex items-center justify-center w-full">
-              <div className={`grid grid-cols-3 gap-2 bg-surface-variant p-2 rounded-xl shadow-inner transition-all duration-300 ${winner === 'X' ? 'ring-4 ring-pink-500 shadow-lg shadow-pink-200' :
+              <div className={`grid grid-cols-3 gap-2 bg-surface-variant p-2 rounded-xl shadow-inner transition-all duration-300 w-full max-w-[280px] aspect-square ${winner === 'X' ? 'ring-4 ring-pink-500 shadow-lg shadow-pink-200' :
                   winner === 'O' ? 'ring-4 ring-red-500 shadow-lg shadow-red-200' :
                   isDraw ? 'ring-4 ring-blue-400 shadow-lg shadow-blue-200' :
                     ''
@@ -276,7 +276,7 @@ const CreativeZone = () => {
                   <button
                     key={i}
                     onClick={() => handleTicClick(i)}
-                    className={`w-20 h-20 bg-surface-container-lowest rounded-lg flex items-center justify-center text-4xl font-black transition-all ${square === 'X' ? 'text-primary' : 'text-secondary'} hover:bg-surface-bright shadow-sm active:scale-95`}
+                    className={`w-full h-full bg-surface-container-lowest rounded-lg flex items-center justify-center text-3xl md:text-4xl font-black transition-all ${square === 'X' ? 'text-primary' : 'text-secondary'} hover:bg-surface-bright shadow-sm active:scale-95`}
                   >
                     {square}
                   </button>
@@ -313,13 +313,13 @@ const CreativeZone = () => {
           </div>
 
           {/* Sketchpad */}
-          <div className="bg-surface-container border border-outline-variant rounded-xl p-gutter flex-grow relative min-h-[500px] overflow-hidden">
-            <div className="flex items-center justify-between mb-base relative z-10">
+          <div className="bg-surface-container border border-outline-variant rounded-xl p-gutter flex-grow flex flex-col relative min-h-[500px] overflow-hidden">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-base relative z-10">
               <div className="flex items-center gap-base">
                 <span className="material-symbols-outlined text-primary">draw</span>
                 <h2 className="font-headline-md text-headline-md">Sketchpad</h2>
               </div>
-              <div className="flex items-center gap-3 bg-surface-bright px-3 py-1.5 rounded-full shadow-sm border border-surface-variant">
+              <div className="flex items-center gap-2 sm:gap-3 bg-surface-bright px-2 sm:px-3 py-1.5 rounded-full shadow-sm border border-surface-variant shrink-0">
                 <div className="flex gap-2 mr-2 border-r border-outline-variant pr-3">
                   {noteColors.map(color => (
                     <button
@@ -337,7 +337,7 @@ const CreativeZone = () => {
               </div>
             </div>
 
-            <div className="absolute inset-0 top-16 bg-surface-bright/50 rounded-lg overflow-hidden">
+            <div className="flex-grow relative bg-surface-bright/50 rounded-lg overflow-hidden min-h-[350px]">
               {notes.map(note => (
                 <motion.div
                   key={note.id}
