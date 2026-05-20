@@ -4,4 +4,4 @@ Disallow: /planner
 Disallow: /timer
 Disallow: /creativezone
 
-Sitemap: https://achievers-library.vercel.app/sitemap.xml
+Sitemap: https://selenophile-zone.vercel.app/sitemap.xml

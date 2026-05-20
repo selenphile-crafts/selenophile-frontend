@@ -35,17 +35,17 @@ const ConnectUs = () => {
           { 
             svgIcon: <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 0C5.394 0 .012 5.382.012 12.018c0 2.122.553 4.195 1.605 6.01L0 24l6.114-1.605c1.76.953 3.74 1.455 5.917 1.455 6.636 0 12.018-5.382 12.018-12.018S18.667 0 12.031 0zm0 21.849c-1.794 0-3.551-.482-5.093-1.396l-.365-.216-3.785.992.993-3.69-.236-.376A9.972 9.972 0 012.012 12.02c0-5.518 4.49-10.008 10.019-10.008 5.518 0 10.008 4.49 10.008 10.008s-4.49 10.008-10.008 10.008zm5.503-7.533c-.302-.151-1.785-.882-2.062-.983-.277-.101-.479-.151-.681.151-.201.302-.78 1.006-.957 1.208-.176.201-.352.226-.654.075-.302-.151-1.275-.471-2.43-1.503-.9-.803-1.507-1.795-1.684-2.097-.176-.302-.019-.465.132-.616.136-.136.302-.352.453-.529.151-.176.201-.302.302-.503.101-.201.05-.377-.025-.529-.075-.151-.681-1.642-.933-2.247-.245-.589-.496-.51-.681-.52-.176-.01-.377-.01-.579-.01-.201 0-.529.076-.806.377-.277.302-1.058 1.033-1.058 2.518 0 1.485 1.083 2.92 1.234 3.121.151.201 2.128 3.248 5.155 4.553.72.312 1.282.498 1.721.637.723.23 1.381.197 1.9.119.585-.088 1.785-.73 2.037-1.435.252-.705.252-1.31.176-1.435-.076-.126-.277-.201-.579-.352z"/></svg>,
             title: 'WhatsApp', 
-            description: 'Quick replies within 2 hours', 
+            description: 'For Account Activation', 
             buttons: [
-              { label: 'Chat on WhatsApp →', href: 'https://wa.me/9625050796' }
+              { label: 'Chat on WhatsApp →', href: 'https://wa.me/9899044653' }
             ] 
           },
           { 
             svgIcon: <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>,
             title: 'Instagram', 
-            description: 'Follow for study tips & updates', 
+            description: 'Just for fun', 
             buttons: [
-              { label: '@selenophile_study', href: 'https://www.instagram.com/achievers_library2024?igsh=cDI4dDF5am12Z3Bn' }
+              { label: '@selenophile_study', href: 'https://www.instagram.com/_sher_jahan?igsh=d2VweDI4N245cHdq' }
             ]
           },
         ].map((card, idx) => (
@@ -98,7 +98,7 @@ const ConnectUs = () => {
     <li>Device Etiquette: Switch mobile phones to silent/vibration mode; take voice calls outside</li>
     <li>Digital Spaces: Community Wi-Fi is for educational and research use only (no social media or gaming)</li>
     <li>Workspace Care: Dispose of trash in provided dustbins to keep study spaces pleasant for others</li>
-  </ul>
+</ul>
 </div>
          <div id="resources" className="bg-surface-bright rounded-xl p-5 border border-surface-variant scroll-mt-24">
   <div className="flex items-center gap-2 mb-3">
@@ -107,11 +107,11 @@ const ConnectUs = () => {
   </div>
   <p className="font-body-md text-body-md text-on-surface-variant mb-3">Access free tools to supercharge your deep work sessions.</p>
   <ul className="list-disc list-inside font-caption text-caption text-on-surface-variant space-y-1">
-    <li>Purified Water: Complimentarily accessible through our advanced, multi-stage filtered drinking water stations</li>
-    <li>High-Speed Connectivity: Seamless, high-speed Wi-Fi access tailored for all your research and study requirements</li>
-    <li>Climate Control: Fully air-conditioned study halls designed to maintain a comfortable and productive environment</li>
-    <li>Daily Periodicals: A curated selection of leading national newspapers and journals updated every morning</li>
-  </ul>
+    <li>Focus Timer: Built-in Pomodoro timer to structure your study sessions and track deep work streaks</li>
+    <li>Creative Zone: A dedicated space for brainstorming, mind mapping, and sketching ideas digitally</li>
+    <li>Sticky Notes Keeper: Save quick thoughts, to-dos, and reminders that stay visible across your sessions</li>
+    <li>Resource : Support self-paced learning journeys</li>
+</ul>
 </div>
         </div>
       </div>
