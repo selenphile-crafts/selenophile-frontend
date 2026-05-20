@@ -289,7 +289,7 @@ const Home = () => {
                       <button
                         type="submit"
                         disabled={loginLoading}
-                        className="bg-primary-container text-on-primary py-3 rounded-lg font-label-md mt-base hover:bg-primary transition-all active:opacity-80 text-white disabled:opacity-50"
+                        className="bg-primary text-on-primary py-3 rounded-lg font-label-md mt-base hover:bg-secondary transition-all active:opacity-80 disabled:opacity-50"
                       >
                         {loginLoading ? 'Logging in...' : 'Access Workspace'}
                       </button>
