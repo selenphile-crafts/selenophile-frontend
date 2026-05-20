@@ -58,11 +58,13 @@ export const TimerProvider = ({ children }) => {
     { id: 3, title: 'Rockstar', url: './audio/rockstar.mp3', icon: 'music_note' },
   ];
 
-  const getDuration = () => {
-    if (mode === 'custom' && customTimeSeconds !== null) return customTimeSeconds;
-    if (mode === 'deepWork') return 25 * 60;
-    if (mode === 'shortBreak') return 5 * 60;
-    return 15 * 60;
+  const getDuration = (targetMode = mode, customSecs = customTimeSeconds) => {
+    if (targetMode === 'custom') {
+      return customSecs !== null ? customSecs : 25 * 60;
+    }
+    if (targetMode === 'deepWork') return 25 * 60;
+    if (targetMode === 'shortBreak') return 5 * 60;
+    return 15 * 60; // longBreak
   };
 
   const reset = () => {
@@ -70,11 +72,29 @@ export const TimerProvider = ({ children }) => {
     setTime(getDuration());
   };
 
+  const changeMode = (newMode) => {
+    if (newMode === 'stopwatch') {
+      setTimerMode('stopwatch');
+      setIsRunning(false);
+      setStopwatchRunning(false);
+    } else {
+      setMode(newMode);
+      setIsRunning(false);
+      setTimerMode('pomodoro');
+      setStopwatchRunning(false);
+      const duration = getDuration(newMode);
+      setTime(duration);
+    }
+  };
+
   const setCustomDuration = (minutes) => {
-    setCustomTimeSeconds(minutes * 60);
+    const seconds = minutes * 60;
+    setCustomTimeSeconds(seconds);
     setMode('custom');
     setIsRunning(false);
-    setTime(minutes * 60);
+    setTimerMode('pomodoro');
+    setStopwatchRunning(false);
+    setTime(seconds);
   };
 
   const start = () => setIsRunning(true);
@@ -91,24 +111,34 @@ export const TimerProvider = ({ children }) => {
     });
   };
 
+  const expectedEndTimeRef = useRef(null);
+  const lastTickedSecondRef = useRef(null);
+
   useEffect(() => {
-    if (isRunning) {
+    if (isRunning && timerMode === 'pomodoro') {
+      expectedEndTimeRef.current = Date.now() + time * 1000;
+      lastTickedSecondRef.current = time;
+
       intervalRef.current = setInterval(() => {
-        if (timerMode === 'pomodoro' && isTickEnabled && tickAudioRef.current) {
-          tickAudioRef.current.currentTime = 0;
-          tickAudioRef.current.play().catch(() => {});
-        }
-        setTime(prev => {
-          if (prev <= 1) {
-            clearInterval(intervalRef.current);
-            setIsRunning(false);
-            audioRef.current?.play().catch(() => {});
-            if (mode === 'deepWork') incrementSession();
-            return 0;
+        const remainingMs = expectedEndTimeRef.current - Date.now();
+        const remainingSecs = Math.max(0, Math.ceil(remainingMs / 1000));
+
+        if (remainingSecs !== lastTickedSecondRef.current) {
+          if (isTickEnabled && tickAudioRef.current && remainingSecs > 0) {
+            tickAudioRef.current.currentTime = 0;
+            tickAudioRef.current.play().catch(() => {});
           }
-          return prev - 1;
-        });
-      }, 1000);
+          lastTickedSecondRef.current = remainingSecs;
+          setTime(remainingSecs);
+        }
+
+        if (remainingSecs <= 0) {
+          clearInterval(intervalRef.current);
+          setIsRunning(false);
+          audioRef.current?.play().catch(() => {});
+          if (mode === 'deepWork') incrementSession();
+        }
+      }, 100);
     } else {
       clearInterval(intervalRef.current);
     }
@@ -116,12 +146,12 @@ export const TimerProvider = ({ children }) => {
   }, [isRunning, mode, timerMode, isTickEnabled]);
 
   useEffect(() => {
-    if (!isRunning) setTime(getDuration());
-  }, [mode]);
+    if (!isRunning) {
+      setTime(getDuration());
+    }
+  }, [mode, customTimeSeconds]);
 
   const progress = Math.max(0, Math.min(1, 1 - time / getDuration()));
-
-
 
   useEffect(() => {
     tickAudioRef.current = new Audio('./audio/tick.mp3');
@@ -141,40 +171,41 @@ export const TimerProvider = ({ children }) => {
       tickAudioRef.current.currentTime = 0;
       tickAudioRef.current.play().catch(() => {});
     }
-    if (stopwatchRunning) return;
     setStopwatchRunning(true);
-    lastTickRef.current = Date.now();
-    stopwatchIntervalRef.current = setInterval(() => {
-      const now = Date.now();
-      const delta = now - lastTickRef.current;
-      setStopwatchTime(prev => {
-        const newTime = prev + delta;
-        if (Math.floor(newTime / 1000) > Math.floor(prev / 1000)) {
-          if (timerMode === 'stopwatch' && isTickEnabled && tickAudioRef.current) {
-            tickAudioRef.current.currentTime = 0;
-            tickAudioRef.current.play().catch(() => {});
-          }
-        }
-        return newTime;
-      });
-      lastTickRef.current = now;
-    }, 10);
   };
 
   const pauseStopwatch = () => {
-    clearInterval(stopwatchIntervalRef.current);
     setStopwatchRunning(false);
   };
 
   const resetStopwatch = () => {
-    clearInterval(stopwatchIntervalRef.current);
     setStopwatchRunning(false);
     setStopwatchTime(0);
   };
 
   useEffect(() => {
+    if (stopwatchRunning && timerMode === 'stopwatch') {
+      lastTickRef.current = Date.now();
+      stopwatchIntervalRef.current = setInterval(() => {
+        const now = Date.now();
+        const delta = now - lastTickRef.current;
+        setStopwatchTime(prev => {
+          const newTime = prev + delta;
+          if (Math.floor(newTime / 1000) > Math.floor(prev / 1000)) {
+            if (isTickEnabled && tickAudioRef.current) {
+              tickAudioRef.current.currentTime = 0;
+              tickAudioRef.current.play().catch(() => {});
+            }
+          }
+          return newTime;
+        });
+        lastTickRef.current = now;
+      }, 10);
+    } else {
+      clearInterval(stopwatchIntervalRef.current);
+    }
     return () => clearInterval(stopwatchIntervalRef.current);
-  }, []);
+  }, [stopwatchRunning, timerMode, isTickEnabled]);
 
   useEffect(() => {
     const shouldRun = (timerMode === 'pomodoro' && isRunning) || (timerMode === 'stopwatch' && stopwatchRunning);
@@ -204,6 +235,7 @@ export const TimerProvider = ({ children }) => {
   const value = {
     // Timer Core
     time, isRunning, start: handleStartSession, pause, reset, mode, setMode, progress, completedSessions, setCustomDuration,
+    changeMode,
     
     // Timer UI State
     timerMode, setTimerMode,

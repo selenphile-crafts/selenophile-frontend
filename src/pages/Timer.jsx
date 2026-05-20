@@ -4,6 +4,7 @@ import { useTimerContext } from '../context/TimerContext';
 const Timer = () => {
   const {
     time, isRunning, start, pause, reset, mode, setMode, progress, completedSessions, setCustomDuration,
+    changeMode,
     timerMode, setTimerMode,
     stopwatchTime, stopwatchRunning, handleStartStopwatch, pauseStopwatch, resetStopwatch,
     customInputOpen, setCustomInputOpen, customMinutes, setCustomMinutes,
@@ -72,7 +73,7 @@ const Timer = () => {
               ].map(item => (
                 <div 
                   key={item.id} 
-                  onClick={() => { setMode(item.id); reset(); setTimerMode('pomodoro'); pauseStopwatch(); }}
+                  onClick={() => changeMode(item.id)}
                   className={`p-3 rounded-lg flex items-center justify-between cursor-pointer transition-colors ${mode === item.id && timerMode === 'pomodoro' ? 'bg-surface-container-high border border-outline-variant' : 'hover:bg-surface-container-low'}`}
                 >
                   <span className={`font-label-md text-sm lg:text-label-md ${mode === item.id && timerMode === 'pomodoro' ? '' : 'opacity-60'}`}>{item.label}</span>
@@ -99,7 +100,6 @@ const Timer = () => {
                       onClick={() => { 
                         if(customMinutes && parseInt(customMinutes) > 0) { 
                           setCustomDuration(parseInt(customMinutes)); 
-                          setTimerMode('pomodoro'); 
                           setCustomInputOpen(false); 
                         } 
                       }} 
@@ -113,7 +113,7 @@ const Timer = () => {
 
               {/* Stopwatch Option */}
               <div 
-                onClick={() => { setTimerMode('stopwatch'); pause(); }}
+                onClick={() => changeMode('stopwatch')}
                 className={`p-3 rounded-lg flex items-center justify-between cursor-pointer transition-colors mt-2 border-t border-surface-variant pt-4 ${timerMode === 'stopwatch' ? 'bg-surface-container-high border border-outline-variant' : 'hover:bg-surface-container-low'}`}
               >
                 <span className={`font-label-md text-sm lg:text-label-md ${timerMode === 'stopwatch' ? '' : 'opacity-60'}`}>Stopwatch</span>
