@@ -377,10 +377,10 @@ const CreativeZone = () => {
         <div className="flex justify-between items-end mb-gutter">
           <div>
             <span className="font-label-md text-label-md text-secondary uppercase tracking-widest">Inspiration Feed</span>
-            <h2 className="font-headline-lg text-headline-lg text-primary">Achievers Sparks</h2>
+            <h2 className="font-headline-lg text-headline-lg text-primary">Selenophile Sparks</h2>
           </div>
           <button onClick={() => setFeedOffset(prev => prev + 1)} className="text-primary font-bold hover:underline flex items-center gap-2 text-sm md:text-base transition-colors">
-            Refresh Library <span className="material-symbols-outlined text-base">refresh</span>
+            Refresh Zone <span className="material-symbols-outlined text-base">refresh</span>
           </button>
         </div>
 

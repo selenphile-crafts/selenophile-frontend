@@ -310,9 +310,6 @@ const Planner = () => {
           >
             <span className="material-symbols-outlined">logout</span> Logout
           </button>
-          <button onClick={() => setComplaintModal(true)} className="flex items-center gap-2 px-4 py-2 border border-primary text-primary rounded-lg font-label-md hover:bg-primary hover:text-white transition-all">
-            <span className="material-symbols-outlined">live_help</span> Raise Issue
-          </button>
         </div>
       </header>
 
@@ -324,7 +321,7 @@ const Planner = () => {
             </h2>
             <div className="space-y-4">
               {focusItems.map(item => (
-                <div key={item.id} className={`flex items-start gap-3 p-4 border rounded-lg transition-colors bg-white ${item.completed ? 'border-surface-container-high bg-surface-container-low/50 opacity-60' : 'border-surface-container-high hover:border-primary'}`}>
+                <div key={item.id} className={`flex items-start gap-3 p-4 border rounded-lg transition-colors bg-surface-container-lowest ${item.completed ? 'border-surface-container-high bg-surface-container-low/50 opacity-60' : 'border-surface-container-high hover:border-primary'}`}>
                   <button onClick={() => toggleFocus(item.id)} className="mt-1 focus:outline-none">
                     <span className={`material-symbols-outlined ${item.completed ? 'text-primary' : 'text-secondary'}`} style={item.completed ? { fontVariationSettings: "'FILL' 1" } : {}}>
                       {item.completed ? 'check_circle' : 'radio_button_unchecked'}
@@ -374,7 +371,7 @@ const Planner = () => {
             </div>
             <div className="flex items-center gap-4 font-label-md">
               <span className="flex items-center gap-2 text-on-surface"><span className="w-3 h-3 rounded-full bg-primary"></span> Deep Work</span>
-              <span className="flex items-center gap-2 text-on-surface"><span className="w-3 h-3 rounded-full bg-tertiary-fixed"></span> Review</span>
+              <span className="flex items-center gap-2 text-on-surface"><span className="w-3 h-3 rounded-full bg-tertiary"></span> Review</span>
             </div>
           </div>
           <div className="overflow-x-auto">
@@ -400,11 +397,11 @@ const Planner = () => {
                           <span className="text-sm">{day}</span>
                           <div className="mt-1 space-y-1">
                             {dayEvents.map(ev => (
-                              <div 
-                                key={ev._id} 
-                                onClick={(e) => { e.stopPropagation(); handleOpenModal(dateStr, ev); }}
-                                className={`text-[10px] p-1 rounded truncate cursor-pointer hover:opacity-80 transition-opacity ${ev.type === 'deepWork' ? 'bg-primary text-white' : 'bg-tertiary-fixed text-on-tertiary-fixed'}`}
-                              >
+                                <div 
+                                  key={ev._id} 
+                                  onClick={(e) => { e.stopPropagation(); handleOpenModal(dateStr, ev); }}
+                                  className={`text-[10px] p-1 rounded truncate cursor-pointer hover:opacity-80 transition-opacity ${ev.type === 'deepWork' ? 'bg-primary text-white' : 'bg-tertiary text-white'}`}
+                                >
                                 {ev.title}
                               </div>
                             ))}

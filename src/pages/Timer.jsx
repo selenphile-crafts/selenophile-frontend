@@ -126,13 +126,20 @@ const Timer = () => {
         <div className="lg:col-span-6 order-1 lg:order-2 flex flex-col items-center w-full">
           <div className="relative flex items-center justify-center mb-8 lg:mb-section-gap w-full">
             <svg viewBox="0 0 400 400" className="w-64 h-64 md:w-80 md:h-80 lg:w-[400px] lg:h-[400px] max-w-full -rotate-90">
-              <circle cx="200" cy="200" r={radius} fill="none" className="text-surface-bright" stroke="currentColor" strokeWidth="12" />
+              {/* Visible background path / track */}
+              <circle cx="200" cy="200" r={radius} fill="none" className="text-primary" stroke="currentColor" strokeWidth="12" opacity="0.15" />
+              {/* Active countdown progress path */}
               <circle
                 cx="200" cy="200" r={radius} fill="none" className="text-primary" stroke="currentColor" strokeWidth="12"
                 strokeLinecap="round"
                 strokeDasharray={`${circumference} ${circumference}`}
                 strokeDashoffset={strokeDashoffset}
-                style={{ transition: isRunning ? 'stroke-dashoffset 1s linear' : 'none' }}
+                opacity={timerMode === 'pomodoro' ? Math.max(0, Math.min(1, 1 - progress)) : 1}
+                style={{ 
+                  transition: isRunning 
+                    ? 'stroke-dashoffset 1s linear, opacity 1s linear' 
+                    : 'stroke-dashoffset 0.3s ease, opacity 0.3s ease' 
+                }}
               />
             </svg>
             <div className="absolute flex flex-col items-center">
@@ -198,7 +205,7 @@ const Timer = () => {
             <img alt="Study space" className="absolute inset-0 w-full h-full object-cover opacity-10" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBElFHkQOAoids5YNvom_nx4GLK7fc_1mNq5YUTTrTKdwjwXyMme9ztQWm3klYMPWxbgUbhF0SS-L-_oL64jFFFmKx1enwsgljRS4LOiIly6kooemwLqZFNJoIlOwBhntxuwFniW5qpoucbgkuUq1seaxZ8EEQtRQm7R_69H4oxwsx0cYRpZANzT0zEw5DTKDz7TN_FulhCdS2XM2J4H1rxnxJJRwOePmrV4UIJpgdlR1PrYYwsKmuJauuCEuC4a4Wyh_gv2YhIiVzO" />
             <div className="relative z-10">
               <h3 className="font-label-md text-label-md text-primary mb-2 flex justify-between items-center">
-                Library Ambience
+                Selenophile Ambience
                 <span className="text-xs text-on-surface-variant font-normal">Track {currentTrackIndex + 1}/{bgmTracks.length}</span>
               </h3>
               

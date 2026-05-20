@@ -119,7 +119,7 @@ export const TimerProvider = ({ children }) => {
     if (!isRunning) setTime(getDuration());
   }, [mode]);
 
-  const progress = 1 - time / getDuration();
+  const progress = Math.max(0, Math.min(1, 1 - time / getDuration()));
 
 
 

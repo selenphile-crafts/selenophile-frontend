@@ -24,7 +24,7 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
             <div className="bg-surface-container-lowest rounded-xl p-6 max-w-sm text-center border border-surface-variant" onClick={e => e.stopPropagation()}>
               <span className="material-symbols-outlined text-primary text-5xl mb-3">lock</span>
               <h3 className="font-headline-md text-headline-md text-primary mb-2">Become a member first</h3>
-              <p className="text-on-surface-variant mb-4">This area is exclusive for Achievers members only.</p>
+              <p className="text-on-surface-variant mb-4">This area is exclusive for Selenophile members only.</p>
               <button onClick={() => setShowPopup(false)} className="bg-primary text-on-primary px-5 py-2 rounded-lg">Close</button>
             </div>
           </motion.div>

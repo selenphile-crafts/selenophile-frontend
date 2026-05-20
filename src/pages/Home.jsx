@@ -10,48 +10,66 @@ const Home = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [toast, setToast] = useState(null);
-  const [loginData, setLoginData] = useState({ email: '', password: '' });
-  const [enquiryData, setEnquiryData] = useState({ name: '', email: '', contact: '' });
-  const [showEnquiryPopup, setShowEnquiryPopup] = useState(false);
   
+  // Login State
+  const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [loginLoading, setLoginLoading] = useState(false);
-  const [enquiryLoading, setEnquiryLoading] = useState(false);
-  const [forgotLoading, setForgotLoading] = useState(false);
-
-  // New States
   const [showPassword, setShowPassword] = useState(false);
+
+  // Forgot Password State
   const [forgotMode, setForgotMode] = useState(false);
   const [forgotData, setForgotData] = useState({ firstName: '', email: '', contact: '', newPassword: '', verifyPassword: '' });
+  const [forgotLoading, setForgotLoading] = useState(false);
   const [showForgotNewPassword, setShowForgotNewPassword] = useState(false);
   const [showForgotVerifyPassword, setShowForgotVerifyPassword] = useState(false);
 
-  const handleEnquiry = async (e) => {
+  // Signup State
+  const [signupForm, setSignupForm] = useState({ firstName: '', lastName: '', contact: '', email: '', password: '', rePassword: '' });
+  const [signupLoading, setSignupLoading] = useState(false);
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
+  const [showSignupRePassword, setShowSignupRePassword] = useState(false);
+
+  const handleSignup = async (e) => {
     e.preventDefault();
-    const sanitized = sanitizeForm(enquiryData);
+    const sanitizedForm = sanitizeForm(signupForm);
     
-    const nameError = validateName(sanitized.name);
-    if (nameError) return setToast({ message: nameError, type: 'error' });
+    const nameError = validateName(sanitizedForm.firstName);
+    if (nameError) return setToast({ message: `First Name: ${nameError}`, type: 'error' });
     
-    const emailError = sanitized.email ? validateEmail(sanitized.email) : null;
+    if (sanitizedForm.lastName) {
+      const lastNameError = validateName(sanitizedForm.lastName);
+      if (lastNameError) return setToast({ message: `Last Name: ${lastNameError}`, type: 'error' });
+    }
+    
+    const contactError = validateContact(sanitizedForm.contact);
+    if (contactError) return setToast({ message: contactError, type: 'error' });
+    
+    const emailError = validateEmail(sanitizedForm.email);
     if (emailError) return setToast({ message: emailError, type: 'error' });
     
-    const contactError = validateContact(sanitized.contact);
-    if (contactError) return setToast({ message: contactError, type: 'error' });
+    const passwordError = validatePassword(sanitizedForm.password);
+    if (passwordError) return setToast({ message: passwordError, type: 'error' });
 
-    setEnquiryLoading(true);
+    if (sanitizedForm.password !== sanitizedForm.rePassword) {
+      setToast({ message: 'Passwords do not match', type: 'error' });
+      return;
+    }
+    
+    setSignupLoading(true);
     try {
-      await api.post('/enquiry', sanitized);
-      setShowEnquiryPopup(true);
-      setEnquiryData({ name: '', email: '', contact: '' });
+      await api.post('/auth/register', {
+        firstName: sanitizedForm.firstName,
+        lastName: sanitizedForm.lastName,
+        contact: sanitizedForm.contact,
+        email: sanitizedForm.email,
+        password: sanitizedForm.password
+      });
+      setToast({ message: 'Account created! Please wait for admin approval.', type: 'success' });
+      setSignupForm({ firstName: '', lastName: '', contact: '', email: '', password: '', rePassword: '' });
     } catch (err) {
-      const errorMsg = err.response?.data?.message || '';
-      if (errorMsg.includes('Invalid login') || errorMsg.includes('535') || errorMsg.includes('BadCredentials')) {
-        setToast({ message: 'Form is not connected', type: 'error' });
-      } else {
-        setToast({ message: errorMsg || 'Error sending enquiry', type: 'error' });
-      }
+      setToast({ message: err.response?.data?.message || 'Signup failed', type: 'error' });
     } finally {
-      setEnquiryLoading(false);
+      setSignupLoading(false);
     }
   };
 
@@ -127,23 +145,10 @@ const Home = () => {
           Enter Your Private Study Sanctuary
         </motion.h1>
         <p className="font-body-lg text-body-lg text-on-surface-variant mb-gutter">
-          ACHIEVER LIBRARY is a dedicated <span className="font-bold text-primary">self-study library</span> designed
+          SELENOPHILE STUDY ZONE is a dedicated <span className="font-bold text-primary">self-study zone</span> designed
           for deep work and intellectual focus.
         </p>
         <div className="w-24 h-1 bg-primary mx-auto rounded-full"></div>
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="mt-8"
-        >
-          <button
-            onClick={() => navigate('/signup')}
-            className="bg-primary text-on-primary px-8 py-3 rounded-full font-label-md hover:bg-secondary transition-all shadow-md"
-          >
-            Sign Up for Library
-          </button>
-        </motion.div>
       </div>
 
       {/* Bento Grid */}
@@ -170,54 +175,57 @@ const Home = () => {
         {/* Right Panel: Forms */}
         <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-gutter">
           
-          {/* Enquiry Form (Join the Library) */}
+          {/* Sign Up Form */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-surface-container-lowest border border-surface-variant rounded-xl p-gutter flex flex-col flex-grow"
+            className="bg-surface-container-lowest border border-surface-variant rounded-xl p-gutter flex flex-col flex-grow relative overflow-hidden"
           >
-            <div className="flex justify-between items-center mb-gutter">
-              <h3 className="font-headline-md text-headline-md text-primary">Enquiry the Library</h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-headline-md text-headline-md text-primary">Become a Member</h3>
             </div>
-            <form className="flex flex-col gap-gutter" onSubmit={handleEnquiry}>
+            <form className="flex flex-col gap-3 h-full overflow-y-auto pr-2 custom-scrollbar" onSubmit={handleSignup}>
               <div className="flex flex-col gap-1">
-                <label className="font-label-md text-label-md text-on-surface-variant">Full Name</label>
-                <input
-                  required
-                  className="bg-surface-bright border border-surface-variant rounded-lg p-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-                  placeholder="e.g., Sher Jahan"
-                  value={enquiryData.name}
-                  onChange={(e) => setEnquiryData({ ...enquiryData, name: e.target.value })}
-                />
+                <label className="font-label-md text-label-md text-on-surface-variant">First Name *</label>
+                <input required className="bg-surface-bright border border-surface-variant rounded-lg p-2.5 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm" placeholder="e.g., Sher Jahan" value={signupForm.firstName} onChange={(e) => setSignupForm({ ...signupForm, firstName: e.target.value })} />
               </div>
               <div className="flex flex-col gap-1">
-                <label className="font-label-md text-label-md text-on-surface-variant">Email Address <span className="text-sm font-normal text-on-surface-variant/70">(Optional)</span></label>
-                <input
-                  type="email"
-                  className="bg-surface-bright border border-surface-variant rounded-lg p-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-                  placeholder="DarshanRaval@achievers.edu"
-                  value={enquiryData.email}
-                  onChange={(e) => setEnquiryData({ ...enquiryData, email: e.target.value })}
-                />
+                <label className="font-label-md text-label-md text-on-surface-variant">Last Name <span className="text-xs font-normal text-on-surface-variant/70">(Optional)</span></label>
+                <input className="bg-surface-bright border border-surface-variant rounded-lg p-2.5 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm" placeholder="e.g., Doe" value={signupForm.lastName} onChange={(e) => setSignupForm({ ...signupForm, lastName: e.target.value })} />
               </div>
               <div className="flex flex-col gap-1">
-                <label className="font-label-md text-label-md text-on-surface-variant">Contact Number</label>
-                <input
-                  required
-                  type="tel"
-                  className="bg-surface-bright border border-surface-variant rounded-lg p-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-                  placeholder="+91 9999-111-0000"
-                  value={enquiryData.contact}
-                  onChange={(e) => setEnquiryData({ ...enquiryData, contact: e.target.value })}
-                />
+                <label className="font-label-md text-label-md text-on-surface-variant">Contact Number *</label>
+                <input required type="tel" className="bg-surface-bright border border-surface-variant rounded-lg p-2.5 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm" placeholder="+91 9999-111-0000" value={signupForm.contact} onChange={(e) => setSignupForm({ ...signupForm, contact: e.target.value })} />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="font-label-md text-label-md text-on-surface-variant">Email Address *</label>
+                <input required type="email" className="bg-surface-bright border border-surface-variant rounded-lg p-2.5 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm" placeholder="name@example.com" value={signupForm.email} onChange={(e) => setSignupForm({ ...signupForm, email: e.target.value })} />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="font-label-md text-label-md text-on-surface-variant">Password *</label>
+                <div className="relative">
+                  <input required type={showSignupPassword ? "text" : "password"} className="bg-surface-bright border border-surface-variant rounded-lg p-2.5 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all w-full pr-10 text-sm" placeholder="••••••••" value={signupForm.password} onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })} />
+                  <button type="button" onClick={() => setShowSignupPassword(!showSignupPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors">
+                    <span className="material-symbols-outlined text-sm">{showSignupPassword ? 'visibility' : 'visibility_off'}</span>
+                  </button>
+                </div>
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="font-label-md text-label-md text-on-surface-variant">Re-enter Password *</label>
+                <div className="relative">
+                  <input required type={showSignupRePassword ? "text" : "password"} className="bg-surface-bright border border-surface-variant rounded-lg p-2.5 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all w-full pr-10 text-sm" placeholder="••••••••" value={signupForm.rePassword} onChange={(e) => setSignupForm({ ...signupForm, rePassword: e.target.value })} />
+                  <button type="button" onClick={() => setShowSignupRePassword(!showSignupRePassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors">
+                    <span className="material-symbols-outlined text-sm">{showSignupRePassword ? 'visibility' : 'visibility_off'}</span>
+                  </button>
+                </div>
               </div>
               <button
                 type="submit"
-                disabled={enquiryLoading}
-                className="bg-primary text-on-primary py-3 rounded-lg font-label-md mt-base hover:bg-secondary transition-all active:opacity-80 disabled:opacity-50"
+                disabled={signupLoading}
+                className="bg-primary text-on-primary py-2.5 rounded-lg font-label-md mt-2 hover:bg-secondary transition-all active:opacity-80 disabled:opacity-50"
               >
-                {enquiryLoading ? 'Sending...' : 'Submit Enquiry'}
+                {signupLoading ? 'Signing up...' : 'Create Account'}
               </button>
             </form>
           </motion.div>
@@ -288,7 +296,7 @@ const Home = () => {
                     </form>
                   </div>
                   <div className="mt-gutter pt-gutter border-t border-outline-variant">
-                    <p className="font-caption text-caption text-on-surface-variant text-center">By logging in, you agree to our Library Rules.</p>
+                    <p className="font-caption text-caption text-on-surface-variant text-center">By logging in, you agree to our Zone Rules.</p>
                   </div>
                 </motion.div>
               ) : (
@@ -399,13 +407,13 @@ const Home = () => {
       </div>
 
       {/* Amenities Section */}
-      <div className="mt-section-gap bg-surface-container-lowest border border-surface-variant rounded-xl p-gutter md:p-12">
+      <div className="mt-section-gap bg-surface-container border border-surface-variant rounded-xl p-gutter md:p-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-base">
           {[
-            { icon: 'timer', label: 'Half-Day & Full-Day Hours', value: '8-8' },
-            { icon: 'auto_stories', label: 'Learners Achieve Their Dreams', value: '100+' },
-            { icon: 'water_drop', label: 'Pure Mineral Water', value: '∞' },
-            { icon: 'ac_unit', label: 'Fully Automated AC', value: '24/7' },
+            { icon: 'timer', label: 'Distraction Free', value: '100%' },
+            { icon: 'auto_stories', label: 'Learners got their creative and focused zone', value: '100+' },
+            { icon: 'architecture', label: 'built for discipline orientation', value: 'Zone' },
+            { icon: 'palette', label: 'creative and planner zones', value: 'Access' },
           ].map((item, idx) => (
             <motion.div
               key={idx}
@@ -413,7 +421,7 @@ const Home = () => {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: idx * 0.1 }}
               whileHover={{ y: -5 }}
-              className="bg-surface-bright p-gutter rounded-xl border border-surface-variant flex flex-col items-center text-center"
+              className="bg-surface-container-lowest p-gutter rounded-xl border border-surface-variant flex flex-col items-center text-center shadow-sm"
             >
               <span className="material-symbols-outlined text-primary mb-2 text-3xl">{item.icon}</span>
               <span className="font-headline-md text-primary text-2xl">{item.value}</span>
@@ -422,42 +430,6 @@ const Home = () => {
           ))}
         </div>
       </div>
-
-      {/* Enquiry Success Popup Modal */}
-      <AnimatePresence>
-        {showEnquiryPopup && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4"
-            onClick={() => setShowEnquiryPopup(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
-              className="bg-surface-container-lowest rounded-xl p-8 max-w-sm w-full text-center border border-surface-variant shadow-lg relative"
-              onClick={e => e.stopPropagation()}
-            >
-              <span className="material-symbols-outlined text-primary text-6xl mb-4" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-              <h3 className="font-headline-md text-headline-md text-primary mb-2">Thanks for visiting us!</h3>
-              <p className="font-body-md text-on-surface-variant mb-6">
-                Your enquiry has been successfully submitted. Our team will contact you shortly to help you join the library.
-              </p>
-              <button
-                onClick={() => {
-                  setShowEnquiryPopup(false);
-                  navigate('/connectus');
-                }}
-                className="w-full bg-primary text-on-primary py-3 rounded-lg font-label-md hover:bg-secondary transition-all"
-              >
-                Explore Connect Us
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>

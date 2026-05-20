@@ -40,7 +40,7 @@ const Header = () => {
       <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex justify-between items-center h-16">
         {/* Logo */}
         <div className="font-headline-md text-headline-md text-primary">
-          <NavLink to="/">Achievers</NavLink>
+          <NavLink to="/">Selenophiles</NavLink>
         </div>
 
         {/* Desktop Navigation */}
